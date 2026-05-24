@@ -1,0 +1,6 @@
+streamlit
+pandas
+plotly
+chromadb
+sentence-transformers
+fpdf2
