@@ -35,7 +35,8 @@ MALWARE_DOSSIER = {
 
 class ForensicBrain:
     def __init__(self):
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')
+        # Add the local_files_only parameter to block internet request checks
+        self.model = SentenceTransformer('all-MiniLM-L6-v2', model_kwargs={"local_files_only": True})
         self.client = chromadb.Client()
         self.collection = self.client.get_or_create_collection(name="malware_vectors")
         # Initialize baseline records so database lookups actually work

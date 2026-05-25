@@ -22,7 +22,6 @@ st.markdown("""
     }
     .shield-inner { width: 32px; height: 42px; background: #0A1128; clip-path: inherit; }
     
-    /* Native element overrides to match your aesthetic */
     div[data-testid="stVerticalBlockBorderWrapper"] {
         background: #1B263B !important; 
         border: 1px solid #415A77 !important;
@@ -38,7 +37,6 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# Persistent State Management for Local Authentication Accounts
 if 'user_db' not in st.session_state: 
     st.session_state.user_db = {"admin": "rootpassword"} 
 if 'auth_active' not in st.session_state: 
@@ -48,7 +46,6 @@ if 'current_operator' not in st.session_state:
 if 'step' not in st.session_state: 
     st.session_state.step = 1
 
-# --- SIDEBAR NODE DIAGNOSTICS ---
 with st.sidebar:
     st.markdown('<div class="shield-hex"><div class="shield-inner"></div></div>', unsafe_allow_html=True)
     st.subheader("NODE MANAGEMENT SYSTEM")
@@ -65,7 +62,6 @@ with st.sidebar:
     else:
         st.write("NODE STATUS: LOCKOUT / UNAUTHENTICATED")
 
-# --- AUTHENTICATION INTERFACE LAYER (SIGN-IN / SIGN-UP) ---
 if not st.session_state.auth_active:
     st.title("CYBER-FORENSIC REQUISITION ENGINE OPERATIONS")
     _, col, _ = st.columns([1, 1.5, 1])
@@ -89,7 +85,6 @@ if not st.session_state.auth_active:
                         st.rerun()
                     else:
                         st.error("Access Refused: Invalid credentials match recorded on registry.")
-                        
             else:
                 st.subheader("PROVISION NEW RUNTIME IDENTITY")
                 reg_id = st.text_input("CREATE OPERATOR IDENTITY CODE", key="reg_id_input")
@@ -110,8 +105,6 @@ if not st.session_state.auth_active:
                         st.success("New operator token assigned completely! Logging into system space...")
                         time.sleep(0.6)
                         st.rerun()
-
-# --- SECURE OPERATIONS DASHBOARD ---
 else:
     st.title("CYBER-FORENSIC REQUISITION ENGINE OPERATIONS")
 
@@ -124,12 +117,14 @@ else:
             
             up_file = st.file_uploader("DROP LOG DATASETS OR EVIDENCE DIRECTLY", type=['csv','txt','json'], label_visibility="collapsed")
             if up_file:
-                if 'brain' not in st.session_state: st.session_state.brain = ForensicBrain()
+                if 'brain' not in st.session_state: 
+                    st.session_state.brain = ForensicBrain()
                 
+                # Dynamic file parsing utilizing robust fallback encodings
                 if up_file.name.endswith('.csv'): 
-                    st.session_state.data = pd.read_csv(up_file)
+                    st.session_state.data = pd.read_csv(up_file, encoding='ISO-8859-1')
                 else: 
-                    st.session_state.data = pd.DataFrame([{"raw": up_file.read().decode()}])
+                    st.session_state.data = pd.DataFrame([{"raw": up_file.read().decode('ISO-8859-1')}])
                 
                 st.session_state.f_hash = st.session_state.brain.get_integrity_hash(st.session_state.data)
                 st.code(f"COMPUTED REQUISITION SIGNATURE IDENTIFIER SHA-256: {st.session_state.f_hash}", language="bash")
